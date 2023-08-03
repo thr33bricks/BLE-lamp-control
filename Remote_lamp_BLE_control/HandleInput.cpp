@@ -28,14 +28,14 @@ void HandleInput::handle(){
             }
             else if(argEquals("cw")){
                 // cold white with medium brightness
-                advert.colour = 0;
+                advert.colour = 100;
                 advert.brightness = 50;
                 advert.start(LIGHT);
                 success = true;
             }
             else if(argEquals("ww")){
                 // warm white with medium brightness
-                advert.colour = 100;
+                advert.colour = 0;
                 advert.brightness = 50;
                 advert.start(LIGHT);
                 success = true;

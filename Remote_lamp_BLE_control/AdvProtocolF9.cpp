@@ -5,7 +5,6 @@ void AdvProtocolF9::getAdvData(uint8_t cmd, uint8_t valCh1, uint8_t valCh2, uint
     if (cmd == SETUP){
         uint8_t id[2] = {0,};
         getId(id);
-        Serial.println("build packet");
         buildPacket(0x28, id[0], id[1], output);
     }
     else if (cmd == ON){
@@ -30,19 +29,18 @@ void AdvProtocolF9::bitReverse(uint8_t *bArr){
 }
 
 void AdvProtocolF9::bleWhitening(uint8_t *bArr){
-    int i2 = 83;
+    int key = 83;
 
-    for (uint8_t i3 = 0; i3 < 38; ++i3){
+    for (uint8_t i = 0; i < 38; ++i){
         uint8_t b = 0;
 
-        for (uint8_t i5 = 0; i5 < 8; ++i5){
-            uint8_t i6 = i2 & 0xFF;
-            b |= ((((i6 & 64) >> 6) << i5) ^ (bArr[i3] & 0xFF)) & (1 << i5);
-            uint8_t i8 = (i6 >> 6) & 1;
-            int i9 = ((i6 << 1) & -2) | i8;
-            i2 = ((i9 ^ (i8 << 4)) & 16) | (i9 & -17);
+        for (uint8_t bit = 0; bit < 8; ++bit){
+            b |= ((((key & 64) >> 6) << bit) ^ (bArr[i])) & (1 << bit);
+            uint8_t k6 = (key >> 6) & 1;
+            int i9 = ((key << 1) & -2) | k6;
+            key = ((i9 ^ (k6 << 4)) & 16) | (i9 & -17);
         }
-        bArr[i3] = b;
+        bArr[i] = b;
     }
 }
 
@@ -76,8 +74,8 @@ void AdvProtocolF9::buildPacket(uint8_t command, uint8_t arg1, uint8_t arg2, uin
     uint8_t id[2] = {0,};
     getId(id);
 
-    for (uint8_t i = 0; i < 25; ++i){
-        packet[i] = PACKET_BASE[i];
+    for (uint8_t i = 0; i < 11; ++i){
+        packet[i] = PAYLOAD_PREFIX[i];
     }
 
     packet[11] = command;
@@ -85,7 +83,12 @@ void AdvProtocolF9::buildPacket(uint8_t command, uint8_t arg1, uint8_t arg2, uin
     packet[13] = id[1];
     packet[14] = arg1;
     packet[15] = arg2;
+    packet[16] = 0;
     packet[17] = rand() & 0xFF;
+
+    for (uint8_t i = 18; i < 23; ++i){
+        packet[i] = 0;
+    }
 
     uint16_t crc = CRC16(packet, 11);
     packet[23] = (crc >> 8) & 0xFF;

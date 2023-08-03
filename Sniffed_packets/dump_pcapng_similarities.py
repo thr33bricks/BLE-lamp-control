@@ -113,7 +113,7 @@ if __name__ == '__main__':
     
     # PCAP_DIR = 'LampD/Hi_Light_PRO__com.cxw.hilightpro/raw_pcap/'
     # PCAP_DIR = 'LampD/LampSmartPro__com.jingyuan.lamp/raw_pcap/'
-    PCAP_DIR = 'LampD/SmartLightControl__com.hf.ble_light/raw_pcap/'
+    PCAP_DIR = '/tmp/bla'
     logging.basicConfig()
     analyzator = BLE_Payload_Extractor(PCAP_DIR)
     analyzator.dump_similarities_in_all_pcapng()

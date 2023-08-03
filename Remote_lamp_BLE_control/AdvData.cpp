@@ -3,8 +3,8 @@
 char AdvData::advData[CMD_BYTES] = {0,};
 bool AdvData::advStopped = true;
 uint8_t AdvData::advLen = 26;
-uint8_t AdvData::colour;
-uint8_t AdvData::brightness;
+uint8_t AdvData::colour = 50;
+uint8_t AdvData::brightness = 100;
 uint8_t AdvData::currProt = F0;
 uint32_t AdvData::startAdvTime;
 uint32_t AdvData::startAdvTimeForProt;
@@ -166,11 +166,11 @@ uint8_t AdvData::getNextProt(){
 }
 
 void AdvData::brAndCCTtoPWM(uint8_t &valCh1, uint8_t &valCh2){
-    uint8_t maxCh1 = (colour >= 50) ? 255 : (uint8_t)(255.0 * ((double)colour / 100.0) + 0.5);
-    uint8_t maxCh2 = (colour <= 50) ? 255 : (uint8_t)(255.0 * ((100.0 - (double)colour) / 100.0) + 0.5);
+    uint8_t maxCh1 = (colour <= 50) ? 255 : (uint8_t)(2.55 * (100 - colour) + 0.5);
+    uint8_t maxCh2 = (colour >= 50) ? 255 : (uint8_t)(2.55 * colour + 0.5);
 
-    valCh1 = (uint8_t)((double)maxCh1 * ((double)brightness / 100.0) + 0.5);
-    valCh2 = (uint8_t)((double)maxCh2 * ((double)brightness / 100.0) + 0.5);
+    valCh1 = (uint8_t)(maxCh1 * (brightness / 100.0) + 0.5);
+    valCh2 = (uint8_t)(maxCh2 * (brightness / 100.0) + 0.5);
 
     if(invertCh){
         uint8_t temp = valCh1;
